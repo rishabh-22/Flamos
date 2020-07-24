@@ -1,8 +1,12 @@
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
 from users import User
+import os
 
-client = MongoClient("mongodb://rishabh:bhardwaj@chatapp-shard-00-00.j6n4l.mongodb.net:27017,chatapp-shard-00-01.j6n4l.mongodb.net:27017,chatapp-shard-00-02.j6n4l.mongodb.net:27017/ChatApp?ssl=true&replicaSet=atlas-b70y2i-shard-0&authSource=admin&retryWrites=true&w=majority")
+mongo_uri = os.environ.get('MONGO_URI')
+
+
+client = MongoClient(mongo_uri)
 
 db = client.get_database("ChatDB")
 users = db.get_collection("users")

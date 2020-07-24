@@ -3,9 +3,11 @@ from flask_login import LoginManager, current_user, login_user, login_required, 
 from flask_socketio import SocketIO, join_room, leave_room
 from pymongo.errors import DuplicateKeyError
 from db import get_user, save_user
+import os
+
 
 app = Flask(__name__)
-app.secret_key = 'afc9b57e82a5c87e3bd7a154de4c90bf'
+app.secret_key = os.environ.get('SECRET_KEY')
 socketio = SocketIO(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
