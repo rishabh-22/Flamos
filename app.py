@@ -6,7 +6,7 @@ from flask_login import LoginManager, current_user, login_user, login_required, 
 from flask_socketio import SocketIO, join_room, leave_room
 from pymongo.errors import DuplicateKeyError
 from db import get_user, save_user, get_rooms_for_user, save_room, add_room_members, get_room, is_room_member, \
-    get_room_members, get_messages, is_room_admin, update_room, remove_room_members, save_message
+    get_room_members, get_messages, is_room_admin, update_room, remove_room_members, save_message, get_all_users
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -80,6 +80,10 @@ def create_room():
             room_id = save_room(room_name, current_user.username)
             if current_user.username in usernames:
                 usernames.remove(current_user.username)
+            for username in usernames:
+                if username not in get_all_users():
+                    message = 'Please add valid names of existing users!'
+                    return render_template('create_room.html', message=message)
             add_room_members(room_id, room_name, usernames, current_user.username)
             return redirect(url_for('view_room', room_id=room_id))
         else:
@@ -91,11 +95,12 @@ def create_room():
 @login_required
 def view_room(room_id):
     room = get_room(room_id)
+    message = request.args.get('message')
     if room and is_room_member(room_id, current_user.username):
         room_members = get_room_members(room_id)
         messages = get_messages(room_id)
         return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members,
-                               messages=messages)
+                               messages=messages, message=message)
     else:
         return "Room not found", 404
 
@@ -117,11 +122,17 @@ def edit_room(room_id):
             members_to_add = list(set(new_members) - set(existing_room_members))
             members_to_remove = list(set(existing_room_members) - set(new_members))
             if len(members_to_add):
+                for member in members_to_add:
+                    if member not in get_all_users():
+                        message = 'Please add valid names of existing users!'
+                        return render_template('edit_room.html', room=room, room_members_str=room_members_str,
+                                               message=message)
                 add_room_members(room_id, room_name, members_to_add, current_user.username)
             if len(members_to_remove):
                 remove_room_members(room_id, members_to_remove)
             message = 'Room edited successfully'
             room_members_str = ",".join(new_members)
+            return redirect(url_for('view_room', room_id=room_id, message=message))
         return render_template('edit_room.html', room=room, room_members_str=room_members_str, message=message)
     else:
         return "Room not found", 404

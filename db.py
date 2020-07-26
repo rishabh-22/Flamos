@@ -84,3 +84,9 @@ def get_messages(room_id, page=0):
     for message in total_messages:
         message['created_at'] = message['created_at'].strftime("%d %b, %H:%M")
     return total_messages[::-1]
+
+
+def get_all_users():
+    all_users = list(users.find({}, {'_id': 1}))
+    names = [data['_id'] for data in all_users]
+    return names
