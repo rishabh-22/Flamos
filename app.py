@@ -71,24 +71,28 @@ def logout():
 @app.route('/create-room/', methods=['GET', 'POST'])
 @login_required
 def create_room():
-    message = ''
-    if request.method == 'POST':
-        room_name = request.form.get('room_name')
-        usernames = [username.strip() for username in request.form.get('members').split(',')]
-
-        if len(room_name) and len(usernames):
-            room_id = save_room(room_name, current_user.username)
+    try:
+        message = ''
+        if request.method == 'POST':
+            room_name = request.form.get('room_name')
+            usernames = [username.strip() for username in request.form.get('members').split(',')]
             if current_user.username in usernames:
                 usernames.remove(current_user.username)
-            for username in usernames:
-                if username not in get_all_users():
-                    message = 'Please add valid names of existing users!'
-                    return render_template('create_room.html', message=message)
-            add_room_members(room_id, room_name, usernames, current_user.username)
-            return redirect(url_for('view_room', room_id=room_id))
-        else:
-            message = 'Failed to create room! Please try again later.'
-    return render_template('create_room.html', message=message)
+
+            if len(room_name) and len(usernames):
+                room_id = save_room(room_name, current_user.username)
+                for username in usernames:
+                    if username not in get_all_users():
+                        message = 'Please add valid names of existing users!'
+                        return render_template('create_room.html', message=message)
+                add_room_members(room_id, room_name, usernames, current_user.username)
+                return redirect(url_for('view_room', room_id=room_id))
+            else:
+                message = 'Failed to create room! Please check the input values of members.'
+        return render_template('create_room.html', message=message)
+    except DuplicateKeyError:
+        message = 'You already have a room with that name. Try another name!'
+        return render_template('create_room.html', message=message)
 
 
 @app.route('/rooms/<room_id>/')
@@ -129,9 +133,17 @@ def edit_room(room_id):
                                                message=message)
                 add_room_members(room_id, room_name, members_to_add, current_user.username)
             if len(members_to_remove):
+                if current_user.username in members_to_remove:
+                    members_to_remove.remove(current_user.username)
+                    message = "Admins can't remove themselves. "
+                existing_set = set(existing_room_members)
+                existing_set.remove(current_user.username)
+                if existing_set == set(members_to_remove):
+                    message = 'Rooms should have at least two members.'
+                    return render_template('edit_room.html', room=room, room_members_str=room_members_str,
+                                           message=message)
                 remove_room_members(room_id, members_to_remove)
-            message = 'Room edited successfully'
-            room_members_str = ",".join(new_members)
+            message += 'Room edited successfully'
             return redirect(url_for('view_room', room_id=room_id, message=message))
         return render_template('edit_room.html', room=room, room_members_str=room_members_str, message=message)
     else:

@@ -9,7 +9,7 @@
 <h3>{{ message }}</h3>
 <form method="post">
     <label>Room Name:</label>
-    <input type="text" name="room_name" value="{{ room.name }}">
+    <input type="text" name="room_name" required value="{{ room.headers.name }}">
     <br>
     <label>Members:</label>
     <input type="text" name="members" value="{{ room_members_str }}">
