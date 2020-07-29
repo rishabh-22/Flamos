@@ -6,7 +6,8 @@ from flask_login import LoginManager, current_user, login_user, login_required, 
 from flask_socketio import SocketIO, join_room, leave_room
 from pymongo.errors import DuplicateKeyError
 from db import get_user, save_user, get_rooms_for_user, save_room, add_room_members, get_room, is_room_member, \
-    get_room_members, get_messages, is_room_admin, update_room, remove_room_members, save_message, get_all_users
+    get_room_members, get_messages, is_room_admin, update_room, remove_room_members, save_message, get_all_users, \
+    remove_room
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -106,7 +107,9 @@ def view_room(room_id):
         return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members,
                                messages=messages, message=message)
     else:
-        return "Room not found", 404
+        message = 'Room not found!'
+        rooms = get_rooms_for_user(current_user.username)
+        return render_template("index.html", rooms=rooms, message=message)
 
 
 @app.route('/rooms/<room_id>/edit', methods=['GET', 'POST'])
@@ -147,7 +150,19 @@ def edit_room(room_id):
             return redirect(url_for('view_room', room_id=room_id, message=message))
         return render_template('edit_room.html', room=room, room_members_str=room_members_str, message=message)
     else:
-        return "Room not found", 404
+        message = 'Room not found!'
+        rooms = get_rooms_for_user(current_user.username)
+        return render_template("index.html", rooms=rooms, message=message)
+
+
+@app.route('/rooms/<room_id>/delete')
+@login_required
+def delete_room(room_id):
+    rooms = []
+    remove_room(room_id)
+    message = 'Room deleted successfully!'
+    rooms = get_rooms_for_user(current_user.username)
+    return render_template("index.html", rooms=rooms, message=message)
 
 
 @app.route('/rooms/<room_id>/messages/')

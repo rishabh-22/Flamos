@@ -92,3 +92,8 @@ def get_all_users():
     all_users = list(users.find({}, {'_id': 1}))
     names = [data['_id'] for data in all_users]
     return names
+
+
+def remove_room(room_id):
+    rooms.remove({'_id': ObjectId(room_id)})
+    room_members.delete_many({'_id.room_id': ObjectId(room_id)})
