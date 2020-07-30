@@ -9,10 +9,13 @@
 <h3>{{ message }}</h3>
 <form method="post">
     <label>Room Name:</label>
-    <input type="text" name="room_name">
+    <input type="text" name="room_name" required>
     <br>
     <label>Members:</label>
-    <input type="text" name="members">
+    <input type="text" name="members" required>
+    <br>
+    <label>Room Password:</label>
+    <input type="password" name="room_password" required>
     <br>
     <button type="submit">Submit</button>
 </form>

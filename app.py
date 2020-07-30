@@ -5,9 +5,11 @@ from flask import Flask, render_template, redirect, request, url_for
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_socketio import SocketIO, join_room, leave_room
 from pymongo.errors import DuplicateKeyError
+
+from crypto import generate_key_from_password
 from db import get_user, save_user, get_rooms_for_user, save_room, add_room_members, get_room, is_room_member, \
     get_room_members, get_messages, is_room_admin, update_room, remove_room_members, save_message, get_all_users, \
-    remove_room
+    remove_room, get_room_key
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -80,8 +82,11 @@ def create_room():
             if current_user.username in usernames:
                 usernames.remove(current_user.username)
 
+            password = request.form.get('room_password')
+            key = generate_key_from_password(password)
+
             if len(room_name) and len(usernames):
-                room_id = save_room(room_name, current_user.username)
+                room_id = save_room(room_name, current_user.username, key)
                 for username in usernames:
                     if username not in get_all_users():
                         message = 'Please add valid names of existing users!'
@@ -103,7 +108,8 @@ def view_room(room_id):
     message = request.args.get('message')
     if room and is_room_member(room_id, current_user.username):
         room_members = get_room_members(room_id)
-        messages = get_messages(room_id)
+        key = get_room_key(room_id)
+        messages = get_messages(room_id, key)
         return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members,
                                messages=messages, message=message)
     else:
@@ -158,7 +164,6 @@ def edit_room(room_id):
 @app.route('/rooms/<room_id>/delete')
 @login_required
 def delete_room(room_id):
-    rooms = []
     remove_room(room_id)
     message = 'Room deleted successfully!'
     rooms = get_rooms_for_user(current_user.username)
@@ -171,7 +176,8 @@ def get_older_messages(room_id):
     room = get_room(room_id)
     if room and is_room_member(room_id, current_user.username):
         page = int(request.args.get('page', 0))
-        messages = get_messages(room_id, page)
+        key = get_room_key(room_id)
+        messages = get_messages(room_id, key, page)
         return dumps(messages)
     else:
         return 'Room not found', 404
@@ -190,7 +196,8 @@ def handle_send_message_event(data):
                                                                     data['room'],
                                                                     data['message']))
     data['created_at'] = datetime.now().strftime("%d %b, %H:%M")
-    save_message(data['room'], data['message'], data['username'])
+    key = get_room_key(data['room'])
+    save_message(data['room'], data['message'], data['username'], key)
     socketio.emit('receive_message', data, room=data['room'])
 
 
