@@ -1,7 +1,6 @@
 # Flask-chat-app
 
-## This is chat room based application made using Flask, MongoDB utilizing sockets functionality to
-create chat rooms and implement basic user authentication.
+## This is chat room based application made using Flask, MongoDB utilizing sockets functionality to create chat rooms and implement basic user authentication.
 
 ### Chat history is stored in database.
 ### The users need to sign up in order to be participate and/or create a room.
