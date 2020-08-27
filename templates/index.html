@@ -1,13 +1,17 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>My Chat App</title>
 </head>
+{% block content %}
 <body>
-<h1>My Chat App</h1>
+<h1>Welcome to FlaMo</h1>
 <h4>{{ message }}</h4>
-<h3>Hi {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Guest{% endif %}!</h3>
+<h3>Hi {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Guest!</h3>
+<h5>Please Login or Signup to talk to your friends on FlaMo</h5>
+{% endif %}
 {% if current_user.is_authenticated %}
     {% if rooms %}
         <h3>My Rooms:</h3>
@@ -22,4 +26,5 @@
 
 {% endif %}
 </body>
+{% endblock %}
 </html>

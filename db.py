@@ -8,7 +8,7 @@ from users import User
 import os
 
 mongo_uri = os.environ.get('MONGO_URI')
-client = MongoClient(mongo_uri)
+client = MongoClient(port=27017)
 MESSAGE_FETCH_LIMIT = 3
 
 db = client.get_database("ChatDB")
@@ -26,7 +26,8 @@ def save_user(username, email, password):
 
 def get_user(username):
     user_data = users.find_one({'_id': username})
-    return User(user_data['_id'], user_data['email'], user_data['password'])
+    if user_data:
+        return User(user_data['_id'], user_data['email'], user_data['password'])
 
 
 def save_room(room_name, created_by, password):
@@ -75,7 +76,7 @@ def is_room_member(room_id, username):
 
 
 def is_room_admin(room_id, username):
-    return room_members.count_documents({'_id': {'room_id': ObjectId(room_id), 'username': username}})
+    return room_members.find_one({'_id': {'room_id': ObjectId(room_id), 'username': username}})['is_room_admin']
 
 
 def save_message(room_id, text, sender, key):
