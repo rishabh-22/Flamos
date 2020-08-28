@@ -7,24 +7,26 @@
 </head>
 {% block content %}
 <body>
-<h1>Welcome to FlaMo</h1>
+<div class="container">
+<h1>Welcome to Flamos</h1>
 <h4>{{ message }}</h4>
 <h3>Hi {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Guest!</h3>
-<h5>Please Login or Signup to talk to your friends on FlaMo</h5>
+<h5>Please Login or Signup to talk to your friends on Flamos</h5>
 {% endif %}
 {% if current_user.is_authenticated %}
     {% if rooms %}
-        <h3>My Rooms:</h3>
+        <h4>Rooms:</h4>
         <ul>
             {% for room in rooms %}
                 <li><a href="/rooms/{{ room._id.room_id }}">{{ room.room_name }}</a></li>
             {% endfor %}
         </ul>
         {% else %}
-        <h3>No rooms present.</h3>
+        <h3>No rooms present. Create one now to talk to your friends.</h3>
     {% endif %}
 
 {% endif %}
+</div>
 </body>
 {% endblock %}
 </html>

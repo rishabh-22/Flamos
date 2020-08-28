@@ -7,17 +7,18 @@
 </head>
 {% block content %}
 <body>
+<div class="container">
 <h1>Login</h1>
-{#<h3>{{ message }}</h3>#}
 <form method="post" action="{{ url_for('login') }}">
-    <label>Username:</label>
-    <input type="text" name="username">
+    <label><b>Username:</b></label>
+    <input class="form-control" type="text" name="username">
     <br>
-    <label>Password:</label>
-    <input type="password" name="password">
+    <label><b>Password:</b></label>
+    <input class="form-control" type="password" name="password">
     <br>
-    <button type="submit">Submit</button>
+    <button class="btn btn-info" type="submit">Submit</button>
 </form>
+</div>
 </body>
 {% endblock %}
 </html>

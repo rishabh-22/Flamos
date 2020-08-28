@@ -7,17 +7,18 @@
 </head>
 {% block content %}
 <body>
+<div class="container">
 <h1>Edit Room</h1>
-<h3>{{ message }}</h3>
 <form method="post">
-    <label>Room Name:</label>
-    <input type="text" name="room_name" required value="{{ room.headers.name }}">
+    <label><b>Room Name:</b></label>
+    <input class="form-control" type="text" name="room_name" required value="{{ room.headers.name }}">
     <br>
-    <label>Members:</label>
-    <input type="text" name="members" value="{{ room_members_str }}">
+    <label><b>Members:</b></label>
+    <input class="form-control" type="text" name="members" value="{{ room_members_str }}">
     <br>
-    <button type="submit">Submit</button>
+    <button class="btn btn-info" type="submit">Submit</button>
 </form>
+</div>
 </body>
 {% endblock %}
 </html>

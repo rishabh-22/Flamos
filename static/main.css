@@ -1,5 +1,5 @@
 body {
-  background: #03fa94;
+  background: #99ecca;
   color: #333333;
   margin-top: 5rem;
 }
@@ -9,7 +9,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bg-steel {
-  background-color: #5f788a;
+  background-color: #1d3d8c;
 }
 
 .site-header .navbar-nav .nav-link {
@@ -78,3 +78,4 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
