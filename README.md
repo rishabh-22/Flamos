@@ -1,4 +1,4 @@
-# Flask-chat-app
+# Flamos
 
 ## This is chat room based application made using Flask, MongoDB utilizing sockets functionality to create chat rooms and implement basic user authentication.
 
