@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
 
@@ -12,7 +13,7 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/">FlaMo</a>
+          <a class="navbar-brand mr-4" href="/">Flamos</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -51,7 +52,6 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-{#{% block content %}#}
 <body>
 {% if message %}
     <h3>{{ message }}</h3>
@@ -59,21 +59,33 @@
 
 <h1>Welcome to chat room: {{ room.headers.name }}</h1>
 
-<button type="button" id="load_older_messages_btn">Load Older Messages</button>
-<div id="messages">
+<div class="container">
+<div id="messages"  style="margin-bottom: 10px; overflow: auto; display: flex; flex-direction: column; justify-content: end; height: 400px">
     {% for message in messages %}
         <div><b>{{ message.sender }}&nbsp;[{{ message.created_at }}]:&nbsp;</b> {{ message.text }}</div>
     {% endfor %}
 </div>
 
+{#here starts the form for message input.#}
+<div class="container-fluid" style="padding-bottom: 5px; bottom: 10px;">
+<div id="message_input_div" style="width: 600px;">
+<div class="col-md-3 col-sm-2 col-2 pl-0 text-center send-btn" style="width: 150px; float: left">
+<button id="load_older_messages_btn" class="btn btn-info" style="font-size:12px">Load Older<br> Messages <i class="fa fa-refresh"></i></button>
+</div>
 <form id="message_input_form">
-    <input type="text" id="message_input" placeholder="Enter your message here">
-    <button type="submit">Send</button>
+<div class="col-md-18 col-sm-8 col-9 pr-0 comment-box" style="width: 350px; float: left">
+<input type="text" id="message_input" class="form-control" placeholder="Your message here" />
+</div>
+<div class="col-md-2 col-sm-3 col-2 pl-0 text-center send-btn" style="width: 100px; float: left">
+<button type="submit" class="btn btn-info">Send</button>
+</div>
 </form>
+</div>
+</div>
 
+</div>
 
 </body>
-{#{% endblock %}#}
  </div>
         <div class="col-md-4">
           <div class="content-section">
