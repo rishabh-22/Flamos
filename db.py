@@ -8,7 +8,7 @@ from users import User
 import os
 
 mongo_uri = os.environ.get('MONGO_URI')
-client = MongoClient(port=27017)
+client = MongoClient()
 MESSAGE_FETCH_LIMIT = 3
 
 db = client.get_database("ChatDB")

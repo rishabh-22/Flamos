@@ -165,15 +165,20 @@
     socket.on('receive_message', function (data) {
         console.log(data);
         const newNode = document.createElement('div');
+        newNode.id = 'newMsg';
+        newNode.tabIndex = -1;
         newNode.innerHTML = `<b>${data.username}&nbsp;[${data.created_at}]:&nbsp;</b> ${data.message}`;
         document.getElementById('messages').appendChild(newNode);
+        document.getElementById('newMsg').focus();
+        newNode.removeAttribute('id');
+        document.getElementById('message_input').focus();
     });
 
     socket.on('join_room_announcement', function (data) {
         console.log(data);
         if (data.username !== "{{ username }}") {
             const newNode = document.createElement('div');
-            newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
+            newNode.innerHTML = `<center><b>${data.username}</b> has joined the room</center>`;
             document.getElementById('messages').appendChild(newNode);
         }
     });
@@ -181,7 +186,7 @@
     socket.on('leave_room_announcement', function (data) {
         console.log(data);
         const newNode = document.createElement('div');
-        newNode.innerHTML = `<b>${data.username}</b> has left the room`;
+        newNode.innerHTML = `<center><b>${data.username}</b> has left the room<center>`;
         document.getElementById('messages').appendChild(newNode);
     });
 
