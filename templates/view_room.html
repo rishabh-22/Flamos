@@ -5,7 +5,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-
+{#    <style>#}
+{#        .msgs {#}
+{#            color: red;#}
+{#        }#}
+{#    </style>#}
 
         <title>{{ room.headers.name }}</title>
 </head>
@@ -57,12 +61,17 @@
     <h3>{{ message }}</h3>
 {% endif %}
 
-<h1>Welcome to chat room: {{ room.headers.name }}</h1>
 
 <div class="container">
-<div id="messages"  style="margin-bottom: 10px; overflow: auto; display: flex; flex-direction: column; justify-content: end; height: 400px">
+    <h1>Welcome to chat room: {{ room.headers.name }}</h1>
+    <div id="messages"  style="margin-bottom: 10px; overflow: auto; display: flex; flex-direction: column; justify-content: end; height: 400px">
     {% for message in messages %}
-        <div><b>{{ message.sender }}&nbsp;[{{ message.created_at }}]:&nbsp;</b> {{ message.text }}</div>
+      <div class="msgs" style="width: 100%; position: relative; border: 1px solid black; margin: 2px 0; background: #0a613d; border-radius: 25px;">
+          <p style="color: yellow; font-size: 17px; margin: 0; padding-left: 20px;"><b>{{ message.sender }}</b></p>
+        <p style="display: inline-block; width: 300px; word-break: break-all; padding-left: 20px; color: #dddddd">{{ message.text }}</p>
+        <span style="color: white; font-size: 10px; position: absolute; bottom: 7px; right: 17px;">{{ message.created_at }}</span>
+      </div>
+
     {% endfor %}
 </div>
 
@@ -77,7 +86,7 @@
 <input type="text" id="message_input" class="form-control" placeholder="Your message here" />
 </div>
 <div class="col-md-2 col-sm-3 col-2 pl-0 text-center send-btn" style="width: 100px; float: left">
-<button type="submit" class="btn btn-info">Send</button>
+<button type="submit" class="btn btn-success">Send</button>
 </div>
 </form>
 </div>
@@ -150,7 +159,12 @@
 
     function prepend_message(message, username, created_at) {
         const newNode = document.createElement('div');
-        newNode.innerHTML = `<b>${username}&nbsp;[${created_at}]:&nbsp;</b> ${message}`;
+        newNode.classList.add('msgs');
+        newNode.innerHTML = `<div class="msgs" style="width: 100%; position: relative; border: 1px solid black; margin: 2px 0; background: #0a613d; border-radius: 25px;">
+            <p style="color: yellow; font-size: 17px; margin: 0; padding-left: 20px;"><b>${username}</b></p>
+            <p style="display: inline-block; width: 300px; word-break: break-all; padding-left: 20px; color: #dddddd">${message}</p>
+            <span style="color: white; font-size: 10px; position: absolute; bottom: 7px; right: 17px;">${created_at}</span>
+            </div>`;
         const messages_div = document.getElementById('messages');
         messages_div.insertBefore(newNode, messages_div.firstChild);
     }
@@ -166,8 +180,13 @@
         console.log(data);
         const newNode = document.createElement('div');
         newNode.id = 'newMsg';
+        newNode.classList.add('msgs')
         newNode.tabIndex = -1;
-        newNode.innerHTML = `<b>${data.username}&nbsp;[${data.created_at}]:&nbsp;</b> ${data.message}`;
+        newNode.innerHTML = `<div class="msgs" style="width: 100%; position: relative; border: 1px solid black; margin: 2px 0; background: #0a613d; border-radius: 25px;">
+            <p style="color: yellow; font-size: 17px; margin: 0; padding-left: 20px;"><b>${data.username}</b></p>
+            <p style="display: inline-block; width: 300px; word-break: break-all; padding-left: 20px; color: #dddddd">${data.message}</p>
+            <span style="color: white; font-size: 10px; position: absolute; bottom: 7px; right: 17px;">${data.created_at}</span>
+            </div>`;
         document.getElementById('messages').appendChild(newNode);
         document.getElementById('newMsg').focus();
         newNode.removeAttribute('id');
