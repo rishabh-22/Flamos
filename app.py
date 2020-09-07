@@ -1,3 +1,4 @@
+import base64
 import os
 from datetime import datetime
 from bson.json_util import dumps
@@ -81,14 +82,15 @@ def create_room():
                 usernames.remove(current_user.username)
 
             password = request.form.get('room_password')
-            key = generate_key_from_password(password)
+            # key = generate_key_from_password(password)
+            password = base64.b64encode(password.encode()).decode()
 
             if len(room_name) and len(usernames):
                 for username in usernames:
                     if username not in get_all_users():
                         flash('Please add valid names of existing users!', 'danger')
                         return render_template('create_room.html')
-                room_id = save_room(room_name, current_user.username, key)
+                room_id = save_room(room_name, current_user.username, password)
                 add_room_members(room_id, room_name, usernames, current_user.username)
                 return redirect(url_for('view_room', room_id=room_id))
             else:
@@ -106,7 +108,8 @@ def view_room(room_id):
     if room and is_room_member(room_id, current_user.username):
         is_admin = is_room_admin(room_id, current_user.username)
         room_members = get_room_members(room_id)
-        key = get_room_key(room_id)
+        password = get_room_key(room_id)
+        key = generate_key_from_password(password)
         messages = get_messages(room_id, key)
         return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members,
                                messages=messages, is_admin=is_admin)
@@ -173,7 +176,8 @@ def get_older_messages(room_id):
     room = get_room(room_id)
     if room and is_room_member(room_id, current_user.username):
         page = int(request.args.get('page', 0))
-        key = get_room_key(room_id)
+        password = get_room_key(room_id)
+        key = generate_key_from_password(password)
         messages = get_messages(room_id, key, page)
         return dumps(messages)
     else:
@@ -193,7 +197,8 @@ def handle_send_message_event(data):
                                                                     data['room'],
                                                                     data['message']))
     data['created_at'] = datetime.now().strftime("%d %b, %H:%M")
-    key = get_room_key(data['room'])
+    password = get_room_key(data['room'])
+    key = generate_key_from_password(password)
     save_message(data['room'], data['message'], data['username'], key)
     socketio.emit('receive_message', data, room=data['room'])
 

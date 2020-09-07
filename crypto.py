@@ -1,4 +1,5 @@
 import base64
+from functools import lru_cache
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -7,6 +8,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 salt = b'\x99!o\xf1\x95\xc7-V\xecg\xd7I{,[\x13'
 
 
+@lru_cache(maxsize=16)
 def generate_key_from_password(password):
     password = password.encode()
     kdf = PBKDF2HMAC(
